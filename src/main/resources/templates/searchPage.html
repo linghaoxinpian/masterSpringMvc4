@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+                xmlns:layout="http://www.ultrap.net.nz/thymeleaf/layout"
+                layout:decorator="layout/default">
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+</head>
+<body>
+    <div class="row" layout:fragment="content">
+        <h4 class="indigo-text center">Please enter a search term</h4>
+
+        <form action="/result" method="get" class="col s12">
+            <div class="row center">
+                <div class="input-field col s6 offset-s3">
+                    <i class="mdi-action-search prefix"></i>
+                    <input id="search" name="search" type="text" class="validate"/>
+                    <label for="search" >Search</label>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
