@@ -1,6 +1,8 @@
 package com.example.demo.profile;
 
 
+import com.example.demo.dates.PastLocalDate;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -19,6 +21,7 @@ public class ProfileForm {
     private String email;
 
     @NotNull
+    @PastLocalDate
     private Date birthDate;
 
    @NotEmpty
