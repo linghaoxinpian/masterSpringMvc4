@@ -1,28 +1,27 @@
 package com.example.demo.profile;
 
 
-
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ProfileForm {
 
-   // @Size(min = 2)
+    @Size(min = 2)
     private String twitterHandle;
 
-   // @Email
-    //@NotEmpty
+    @Email
+    @NotEmpty
     private String email;
 
     @NotNull
-    private LocalDate birthDate;
+    private Date birthDate;
 
-   // @NotEmpty
+   @NotEmpty
     private List<String> tastes=new ArrayList<>();
 
 
@@ -46,11 +45,11 @@ public class ProfileForm {
         this.email = email;
     }
 
-    public LocalDate getBirthDate() {
+    public Date getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(LocalDate birthDate) {
+    public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
     }
 
