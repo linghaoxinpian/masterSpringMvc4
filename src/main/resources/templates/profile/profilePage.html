@@ -11,26 +11,28 @@
         <h2 class="indigo-text center">Personal info</h2>
 
 
-
         <form th:action="@{/profile}" th:object="${profileForm}" method="post" class="col m8 s12 offset-m2">
-            <ul th:if="${#fields.hasErrors('all')}" class="errorlist">
-                <li th:each="err : ${#fields.errors('all')}" th:text="${err}">Inputis incorrect</li>
-            </ul>
+            <!--<ul th:if="${#fields.hasErrors('all')}" class="errorlist">-->
+                <!--<li th:each="err : ${#fields.errors('all')}" th:text="${err}">Inputis incorrect</li>-->
+            <!--</ul>-->
 
             <div class="row">
                 <div class="input-field col s6">
-                    <input id="twitterHandle" th:field="${profileForm.twitterHandle}" type="text">
+                    <input id="twitterHandle" th:field="${profileForm.twitterHandle}"  th:errorclass="invalid" type="text">
                     <label for="twitterHandle" >Last Name</label>
+                    <div th:errors="*{twitterHandle}" class="red-text">Error</div>
                 </div>
                 <div class="input-field col s6">
-                    <input id="email" type="text" th:field="${profileForm.email}">
+                    <input id="email" type="text" th:field="${profileForm.email}" th:errorsclass="invalid">
                     <label for="email" >Email</label>
+                    <div class="red-text" th:errors="*{email}">Error</div>
                 </div>
             </div>
             <div class="row">
                 <div class="input-field col s6">
-                    <input id="birthDate" th:field="${profileForm.birthDate}" th:placeholder="${dateFormat}" type="text">
+                    <input id="birthDate" th:field="${profileForm.birthDate}" th:errorclass="invalid" th:placeholder="${dateFormat}" type="text">
                     <label for="birthDate">Birth Date</label>
+                    <div class="red-text" th:errors="*{email}">Error</div>
                 </div>
             </div>
             <div class="row s12">

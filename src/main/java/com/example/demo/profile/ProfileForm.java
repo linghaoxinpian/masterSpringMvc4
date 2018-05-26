@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ProfileForm {
 
-    @Size(min = 2)
+    @Size(min = 2,message = "Please specify a valid twitter handle")
     private String twitterHandle;
 
     @Email
