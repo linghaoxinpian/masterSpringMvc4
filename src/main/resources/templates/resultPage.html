@@ -2,10 +2,9 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
                 xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
                 layout:decorator="layout/default">
-<head>
+<head th:insert="~{layout/default::materializeCss}">
     <meta charset="UTF-8">
     <title>Hello thymeleaf twitter</title>
-    <link href="webjars/materializecss/0.96.0/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection" >
 </head>
 <body>
     <div class="row">
