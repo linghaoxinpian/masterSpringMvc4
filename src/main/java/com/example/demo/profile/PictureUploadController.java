@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.*;
 
@@ -20,7 +21,20 @@ public class PictureUploadController {
     }
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public String onUpload(MultipartFile file) throws IOException {
+    public String onUpload(MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
+
+        if(file.isEmpty()||!isImage(file)){
+            redirectAttributes.addFlashAttribute("error","Incorrect file. Please upload a picture.");
+            return "redirect:/upload";
+        }
+
+        copyFileToPictures(file);
+
+        return "profile/uploadPage";
+    }
+
+    //储存图片到本地目录
+    private void copyFileToPictures(MultipartFile file) throws IOException {
         String filename = file.getOriginalFilename();
         System.out.println("原始文件名：" + filename);
         File tempFile = File.createTempFile("pic", filename.substring(filename.lastIndexOf(".")), PICTURES_DIR.getFile());
@@ -32,7 +46,10 @@ public class PictureUploadController {
         ) {
             IOUtils.copy(in, out);
         }
-        return "profile/uploadPage";
+    }
+
+    private boolean isImage(MultipartFile file) {
+        return  file.getContentType().startsWith("image");
     }
 
 }
