@@ -2,11 +2,14 @@ package com.example.demo.profile;
 
 import com.example.demo.config.PictureUploadProperties;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -14,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLConnection;
 
+@SessionAttributes("picturePath")   //将picturePath存储在Session中
 @Controller
 public class PictureUploadController {
     private final Resource picturesDir;
@@ -36,27 +40,28 @@ public class PictureUploadController {
     }
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public String onUpload(MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
+    public String onUpload(MultipartFile file, RedirectAttributes redirectAttributes, Model model) throws IOException {
 
         if(file.isEmpty()||!isImage(file)){
             redirectAttributes.addFlashAttribute("error","Incorrect file. Please upload a picture.");
             return "redirect:/upload";
         }
-
-        copyFileToPictures(file);
+        System.out.println("mode是否包含模型属性picturePath："+model.containsAttribute("picturePath"));
+        Resource picturePath = copyFileToPictures(file);
+        model.addAttribute("picturePath",picturePath);
 
         return "profile/uploadPage";
     }
 
     @RequestMapping(value = "/uploadedPicture")
     public void getUPloadedPicture(HttpServletResponse response,@ModelAttribute("picturePath") Resource picturePath) throws IOException {
-        response.setHeader("Content-Type", URLConnection.guessContentTypeFromName(anonymousPicture.getFilename()));
-        IOUtils.copy(anonymousPicture.getInputStream(),response.getOutputStream());
+        response.setHeader("Content-Type", URLConnection.guessContentTypeFromName(picturePath.toString()));
+        IOUtils.copy(picturePath.getInputStream(),response.getOutputStream());
         System.out.println("模型picturePath的值："+picturePath);
     }
 
     //储存图片到本地目录
-    private void copyFileToPictures(MultipartFile file) throws IOException {
+    private Resource copyFileToPictures(MultipartFile file) throws IOException {
         String filename = file.getOriginalFilename();
         String fileExtension=filename.substring(filename.lastIndexOf("."));
         System.out.println("原始文件名：" + filename);
@@ -69,6 +74,7 @@ public class PictureUploadController {
         ) {
             IOUtils.copy(in, out);
         }
+        return new FileSystemResource(tempFile);
     }
 
     private boolean isImage(MultipartFile file) {
