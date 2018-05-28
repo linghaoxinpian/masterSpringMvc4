@@ -4,6 +4,7 @@ import com.example.demo.config.PictureUploadProperties;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +22,12 @@ public class PictureUploadController {
     public PictureUploadController(PictureUploadProperties uploadProperties){
         picturesDir=uploadProperties.getUploadPath();
         anonymousPicture=uploadProperties.getAnonymousPicture();
+    }
+
+    //★这里是一个模型属性，在这个类的所有请求方法参数中加入 @ModelAttribute("picturePath") Path picturePath 这样一个参数，那么其方法中就可以获取到这个模型属性的值了
+    @ModelAttribute("picturePath")
+    public Resource picturePath(){
+        return anonymousPicture;
     }
 
     @RequestMapping("upload")
@@ -42,9 +49,10 @@ public class PictureUploadController {
     }
 
     @RequestMapping(value = "/uploadedPicture")
-    public void getUPloadedPicture(HttpServletResponse response) throws IOException {
+    public void getUPloadedPicture(HttpServletResponse response,@ModelAttribute("picturePath") Resource picturePath) throws IOException {
         response.setHeader("Content-Type", URLConnection.guessContentTypeFromName(anonymousPicture.getFilename()));
         IOUtils.copy(anonymousPicture.getInputStream(),response.getOutputStream());
+        System.out.println("模型picturePath的值："+picturePath);
     }
 
     //储存图片到本地目录
