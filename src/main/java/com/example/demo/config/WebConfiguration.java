@@ -1,6 +1,8 @@
 package com.example.demo.config;
 
 import com.example.demo.dates.Zh_LocalDateFormatter;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -14,7 +16,8 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import java.time.LocalDate;
 
 //对spring mvc进行自定义配置的类
-@Configuration
+@SpringBootApplication  //包含了Configuration注解
+@EnableConfigurationProperties({PictureUploadProperties.class})
 public class WebConfiguration extends WebMvcConfigurerAdapter {
 
     @Override

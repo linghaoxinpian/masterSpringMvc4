@@ -1,7 +1,7 @@
 package com.example.demo.profile;
 
+import com.example.demo.config.PictureUploadProperties;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,11 +9,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLConnection;
 
 @Controller
 public class PictureUploadController {
-    public static final Resource PICTURES_DIR = new FileSystemResource("./pictures");
+    private final Resource picturesDir;
+    private  final Resource anonymousPicture;
+
+    public PictureUploadController(PictureUploadProperties uploadProperties){
+        picturesDir=uploadProperties.getUploadPath();
+        anonymousPicture=uploadProperties.getAnonymousPicture();
+    }
 
     @RequestMapping("upload")
     public String uploadPage() {
@@ -33,11 +41,18 @@ public class PictureUploadController {
         return "profile/uploadPage";
     }
 
+    @RequestMapping(value = "/uploadedPicture")
+    public void getUPloadedPicture(HttpServletResponse response) throws IOException {
+        response.setHeader("Content-Type", URLConnection.guessContentTypeFromName(anonymousPicture.getFilename()));
+        IOUtils.copy(anonymousPicture.getInputStream(),response.getOutputStream());
+    }
+
     //储存图片到本地目录
     private void copyFileToPictures(MultipartFile file) throws IOException {
         String filename = file.getOriginalFilename();
+        String fileExtension=filename.substring(filename.lastIndexOf("."));
         System.out.println("原始文件名：" + filename);
-        File tempFile = File.createTempFile("pic", filename.substring(filename.lastIndexOf(".")), PICTURES_DIR.getFile());
+        File tempFile = File.createTempFile("pic", fileExtension, picturesDir.getFile());
 
         //try...with代码块将会自动关闭流，即便出现异常也是,从而移除了finally代码块
         try (
