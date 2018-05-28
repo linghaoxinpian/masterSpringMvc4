@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.WebUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLConnection;
@@ -40,16 +42,15 @@ public class PictureUploadController {
     //处理上传的文件并跳转
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public String onUpload(MultipartFile file, RedirectAttributes redirectAttributes, Model model) throws IOException {
-        throw new IOException("Some Message");
-//        if(file.isEmpty()||!isImage(file)){
-//            redirectAttributes.addFlashAttribute("error","Incorrect file. Please upload a picture.");
-//            return "redirect:/upload";
-//        }
-//        System.out.println("mode是否包含模型属性picturePath："+model.containsAttribute("picturePath"));
-//        Resource picturePath = copyFileToPictures(file);
-//        model.addAttribute("picturePath",picturePath);
-//
-//        return "profile/uploadPage";
+        if(file.isEmpty()||!isImage(file)){
+            redirectAttributes.addFlashAttribute("error","Incorrect file. Please upload a picture.");
+            return "redirect:/upload";
+        }
+        System.out.println("mode是否包含模型属性picturePath："+model.containsAttribute("picturePath"));
+        Resource picturePath = copyFileToPictures(file);
+        model.addAttribute("picturePath",picturePath);
+
+        return "profile/uploadPage";
     }
 
     @RequestMapping(value = "/uploadedPicture")
@@ -57,6 +58,14 @@ public class PictureUploadController {
         response.setHeader("Content-Type", URLConnection.guessContentTypeFromName(picturePath.toString()));
         IOUtils.copy(picturePath.getInputStream(),response.getOutputStream());
         System.out.println("模型picturePath的值："+picturePath);
+    }
+
+    //MultipartException异常处理
+    @RequestMapping("uploadError")
+    public ModelAndView onUploadError(HttpServletRequest request){
+        ModelAndView modelAndView=new ModelAndView("profile/uploadPage");
+        modelAndView.addObject("error",request.getAttribute(WebUtils.ERROR_MESSAGE_ATTRIBUTE));
+        return modelAndView;
     }
 
     //储存图片到本地目录
