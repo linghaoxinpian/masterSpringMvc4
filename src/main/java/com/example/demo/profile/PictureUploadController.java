@@ -27,7 +27,7 @@ public class PictureUploadController {
     private  final Resource anonymousPicture;
     private final MessageSource messageSource;
 
-    //@Autowired    第4章有这个，暂时不加，弄清原因或报错再加
+    @Autowired    //第4章有这个，暂时不加，弄清原因或报错再加...知道了，简单说下，这里是构造函数注入，等价于属性上使用@Autowired的域注入
     public PictureUploadController(PictureUploadProperties uploadProperties,MessageSource messageSource){
         picturesDir=uploadProperties.getUploadPath();
         anonymousPicture=uploadProperties.getAnonymousPicture();
