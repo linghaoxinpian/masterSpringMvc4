@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{layout/default :: materializeCss }">
+    <meta charset="UTF-8">
+    <title th:text="${status}">404</title>
+</head>
+<body>
+<div class="row">
+    <h1 class="indigo-text center" th:text="${error}">Not found1</h1>
+
+    <p class="col s12 center" th:text="${messages}">This page is not available</p>
+</div>
+</body>
+</html>
