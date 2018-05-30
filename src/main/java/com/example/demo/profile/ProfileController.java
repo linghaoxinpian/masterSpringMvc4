@@ -43,7 +43,7 @@ public class ProfileController {
         }
         userProfileSession.saveForm(profileForm);   //借助Spring mvc将数据存储到会话中
         System.out.println("save ok "+ profileForm);
-        return "redirect:/profile";
+        return "redirect:/search/mixed;keywords=apple,strawberry";
     }
 
     @RequestMapping(value = "/profile",params = {"addTaste"})

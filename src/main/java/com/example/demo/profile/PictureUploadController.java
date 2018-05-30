@@ -20,47 +20,46 @@ import java.io.*;
 import java.net.URLConnection;
 import java.util.Locale;
 
-@SessionAttributes("picturePath")   //将picturePath存储在Session中
 @Controller
 public class PictureUploadController {
     private final Resource picturesDir;
     private  final Resource anonymousPicture;
     private final MessageSource messageSource;
+    private final UserProfileSession userProfileSession;
 
     @Autowired    //第4章有这个，暂时不加，弄清原因或报错再加...知道了，简单说下，这里是构造函数注入，等价于属性上使用@Autowired的域注入
-    public PictureUploadController(PictureUploadProperties uploadProperties,MessageSource messageSource){
+    public PictureUploadController(PictureUploadProperties uploadProperties,MessageSource messageSource,UserProfileSession userProfileSession){
         picturesDir=uploadProperties.getUploadPath();
         anonymousPicture=uploadProperties.getAnonymousPicture();
         this.messageSource=messageSource;
+        this.userProfileSession=userProfileSession;
     }
 
-    //★这里是一个模型属性，在这个类的所有请求方法参数中加入 @ModelAttribute("picturePath") Path picturePath 这样一个参数，那么其方法中就可以获取到这个模型属性的值了
-    @ModelAttribute("picturePath")
-    public Resource picturePath(){
-        return anonymousPicture;
-    }
-
-    @RequestMapping("upload")
-    public String uploadPage() {
-        return "profile/uploadPage";
+    @ModelAttribute("userProfileSession")
+    public UserProfileSession userProfileSession(){
+        return userProfileSession;
     }
 
     //处理上传的文件并跳转
-    @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public String onUpload(MultipartFile file, RedirectAttributes redirectAttributes, Model model) throws IOException {
+    @RequestMapping(value = "/profile",params = {"upload"},method = RequestMethod.POST)
+    public String onUpload(MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
         if(file.isEmpty()||!isImage(file)){
             redirectAttributes.addFlashAttribute("error","Incorrect file. Please upload a picture.");
-            return "redirect:/upload";
+            return "redirect:/profile";
         }
-        System.out.println("mode是否包含模型属性picturePath："+model.containsAttribute("picturePath"));
-        Resource picturePath = copyFileToPictures(file);
-        model.addAttribute("picturePath",picturePath);
 
-        return "profile/uploadPage";
+        Resource picturePath = copyFileToPictures(file);
+        userProfileSession.setPicturePath(picturePath);
+
+        return "redirect:profile";
     }
 
     @RequestMapping(value = "/uploadedPicture")
-    public void getUPloadedPicture(HttpServletResponse response,@ModelAttribute("picturePath") Resource picturePath) throws IOException {
+    public void getUPloadedPicture(HttpServletResponse response/*,@ModelAttribute("picturePath") Resource picturePath*/) throws IOException {
+        Resource picturePath=userProfileSession.getPicturePath();
+        if(picturePath==null){
+            picturePath=anonymousPicture;
+        }
         response.setHeader("Content-Type", URLConnection.guessContentTypeFromName(picturePath.toString()));
         IOUtils.copy(picturePath.getInputStream(),response.getOutputStream());
         System.out.println("模型picturePath的值："+picturePath);
@@ -97,7 +96,7 @@ public class PictureUploadController {
 
     @ExceptionHandler(IOException.class)
     public ModelAndView handleIOException(Locale locale){
-        ModelAndView modelAndView=new ModelAndView(("profile/uploadPage"));
+        ModelAndView modelAndView=new ModelAndView(("profile/profilePage"));
         modelAndView.addObject("error",messageSource.getMessage("upload.io.exception",null,locale));    //这里的locale是：lang=en,会去message_en.properties文件里去查找
         return modelAndView;
     }

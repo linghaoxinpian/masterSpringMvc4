@@ -2,8 +2,13 @@ package com.example.demo.profile;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +21,8 @@ public class UserProfileSession implements Serializable {   //实现Serializable
     private String email;
     private Date birthDate;
     private List<String> tastes=new ArrayList<>();
+    private URL picturePath;
+
 
     public void saveForm(ProfileForm profileForm){
         this.twitterHandle=profileForm.getTwitterHandle();
@@ -32,5 +39,13 @@ public class UserProfileSession implements Serializable {   //实现Serializable
         profileForm.setTastes(tastes);
 
         return profileForm;
+    }
+
+    public Resource getPicturePath() {
+        return picturePath==null?null:new UrlResource(picturePath);
+    }
+
+    public void setPicturePath(Resource picturePath) throws IOException {
+        this.picturePath = picturePath.getURL();
     }
 }

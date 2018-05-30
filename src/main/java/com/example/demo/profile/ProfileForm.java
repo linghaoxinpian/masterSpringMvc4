@@ -24,10 +24,7 @@ public class ProfileForm {
     @PastLocalDate
     private Date birthDate;
 
-   @NotEmpty
     private List<String> tastes=new ArrayList<>();
-
-
 
 
     //---------------属性---------------
