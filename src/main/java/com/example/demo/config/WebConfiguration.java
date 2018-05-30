@@ -72,5 +72,6 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
         UrlPathHelper urlPathHelper=new UrlPathHelper();
         urlPathHelper.setRemoveSemicolonContent(false); //移除URL中分号之后的内容，关闭
         configurer.setUrlPathHelper(urlPathHelper);
+        configurer.setUseRegisteredSuffixPatternMatch(true);    //省略点号后面的内容，关闭
     }
 }
