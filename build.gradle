@@ -32,5 +32,7 @@ dependencies {
 	//compile('org.springframework.boot:spring-boot-starter-social-twitter')	//download 不下来
 	compile('org.webjars:materializecss:0.96.0')
 	compile('org.webjars:jquery:2.1.4')
+	compile('io.springfox:springfox-swagger2:2.8.0')
+	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.8.0'
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }

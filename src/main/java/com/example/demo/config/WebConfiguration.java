@@ -21,12 +21,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.util.UrlPathHelper;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.time.LocalDate;
 
 //对spring mvc进行自定义配置的类
 @SpringBootApplication  //包含了Configuration注解
 @EnableConfigurationProperties({PictureUploadProperties.class})
+@EnableSwagger2
 public class WebConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
@@ -73,5 +77,14 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
         urlPathHelper.setRemoveSemicolonContent(false); //移除URL中分号之后的内容，关闭
         configurer.setUrlPathHelper(urlPathHelper);
         configurer.setUseRegisteredSuffixPatternMatch(true);    //省略点号后面的内容，关闭
+    }
+
+    //设置swagger只暴露 "/api/" 这一个ApI,不配置则在浏览器显示所有API
+    @Bean
+    public Docket userApi(){
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()
+                .paths(path->path.startsWith("/api/"))
+                .build();
     }
 }
