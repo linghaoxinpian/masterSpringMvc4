@@ -41,11 +41,44 @@ public class UserProfileSession implements Serializable {   //实现Serializable
         return profileForm;
     }
 
+//------------------属性--------------------
     public Resource getPicturePath() {
         return picturePath==null?null:new UrlResource(picturePath);
     }
 
     public void setPicturePath(Resource picturePath) throws IOException {
         this.picturePath = picturePath.getURL();
+    }
+
+    public String getTwitterHandle() {
+        return twitterHandle;
+    }
+
+    public void setTwitterHandle(String twitterHandle) {
+        this.twitterHandle = twitterHandle;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public List<String> getTastes() {
+        return tastes;
+    }
+
+    public void setTastes(List<String> tastes) {
+        this.tastes = tastes;
     }
 }
